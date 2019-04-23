@@ -4,11 +4,11 @@
 #include <math.h>
 
 #ifndef LOAD_SIZE
-#define LOAD_SIZE      30
+#define LOAD_SIZE      50
 #endif
 
 #ifndef MIN_SAMPLE
-#define MIN_SAMPLE     5
+#define MIN_SAMPLE     3
 #endif
 
 #ifndef nullptr
@@ -141,8 +141,9 @@ matriz(int m, int n){
 	for(i=0; i<m; i++){
 		temp[i] = vetor(n);
 		if(temp[i] == nullptr){
-			free_matriz(temp, i); 
-			return nullptr;
+			free_matriz(temp, i);
+			temp = nullptr; 
+			return temp;
 		}
 	}
 	return temp;
@@ -195,14 +196,28 @@ max_array_size(void) {
 	double* x = vetor(n);
 	double* y = vetor(n);
 	
-	do {	
+	while(1) {	
 		free_matriz(A, n); free(x); free(y);
+
 		n <<= 1;
-		A = matriz(n, n); x = vetor(n); y = vetor(n);
+
+		A = matriz(n, n);
+		if (A == nullptr){
+			break;
+		} 
 		
-	} while(A != nullptr && x != nullptr && y != nullptr);
-	
-	free_matriz(A, n); free(x); free(y);
-	
+		x = vetor(n);
+		if (x == nullptr) {
+			free_matriz(A, n);
+			break;
+		}
+		
+		y = vetor(n);
+		if (y == nullptr) {
+			free_matriz(A, n);
+			free(x);
+			break;
+		}	
+	}
 	return n >> 1;
 }
