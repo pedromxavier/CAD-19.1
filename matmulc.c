@@ -17,13 +17,16 @@ int
 main(int argc, const char* argv[]){
     int seed = time(NULL);
     srand(seed);
-	
+    
 	int n, N, s, V;
 	
-	if (!strcmp(argv[1], "-h")){
-		printf(USAGE);
-		return 0;
+	if (argc == 2){
+		if (!strcmp(argv[1], "-h")){
+			printf(USAGE);
+			return 0;
+		}
 	}
+
 	
 	switch(argc - 1){
         case 0:
@@ -62,7 +65,7 @@ main(int argc, const char* argv[]){
 			return 1;
 	}
 	
-	printf(BEGIN, n, N, s, V);
+	
 	
 	if (V < MIN_SAMPLE){
 		V = MIN_SAMPLE;
@@ -85,12 +88,13 @@ main(int argc, const char* argv[]){
 		printf("Warning: N must be n or greater. Assuming N = n.\n\n");
 	}
 	
+	printf(BEGIN, n, N, s, V);
+	
 	// initializes with maximum sizes
 	double** A = matriz(N, N);
     double* x = vetor(N);
     double* y = vetor(N);
 	
-
 	FILE* fp_c;
 	FILE* fp_f;
 
@@ -99,12 +103,12 @@ main(int argc, const char* argv[]){
 
 	int k, v;
 	
-	//int d = (N - n)/s;
-	//int i = 0;
+	int d = (N - n)/s;
+	int i = 0;
 	
-	//clock_t antes, depois;
+	clock_t antes, depois;
 	
-	//antes = clock();
+	antes = clock();
 
 	while(n <= N){ // iterate over matrix sizes
 		v = sample(V, n); // v <= V
@@ -114,8 +118,8 @@ main(int argc, const char* argv[]){
 			T_c[k] = MatMulC(A, x, y, n);
 			T_f[k] = MatMulF(A, x, y, n);
 			
-			//depois = clock();
-			//loading(i, d, depois-antes);
+			depois = clock();
+			loading(i, d, depois-antes);
 		}
 
 		double mu_c, sigma_c;
@@ -127,7 +131,7 @@ main(int argc, const char* argv[]){
 		fprintf(fp_c, "%d|%.16e$%.16e|%d\n", n, mu_c, sigma_c, v);
 		fprintf(fp_f, "%d|%.16e$%.16e|%d\n", n, mu_f, sigma_f, v);
 		n += s;
-		//i++;
+		i++;
 	}
 	
 	free_matriz(A, N); free(x); free(y); free(T_c); free(T_f);
