@@ -1,7 +1,7 @@
 	program matmul
         implicit none
 
-        integer, parameter :: N = 1200, v = 200, s = 2
+        integer, parameter :: N = 20000, v = 1, s = 500
         integer :: k, i
 
 		double precision :: mean, stddev
@@ -15,9 +15,9 @@
         open (unit=1, file="f_result_c.txt")
         open (unit=2, file="f_result_f.txt")
 
-10      format (i4,"|",f18.16,"$",f18.16,"|200")
+10      format (i5,"|",f22.12,"$",f22.12,"|200")
 
-        do k=2, N, s
+        do k=1000, N, s
             do i=1, v
                 call MatMulC(A, x, y, k, t_c)
                 call MatMulF(A, x, y, k, t_f)
@@ -27,11 +27,11 @@
 
             t = mean(T__c, v)
             dt = stddev(T__c, v)
-            write (1, 10), k, t, dt
+            write (1, 10) k, t, dt
 
             t = mean(T__f, v)
             dt = stddev(T__f, v)
-            write (2, 10), k, t, dt
+            write (2, 10) k, t, dt
         end do
 
 	end program matmul

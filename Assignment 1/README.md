@@ -19,7 +19,7 @@ arquivos:
 
 ## FORTRAN:
 ```
-gfortran -o matmulf matmul.f95
+gfortran -o matmulf matmul.f95 -mcmodel=large
 ./matmulf
 
 arquivos:
