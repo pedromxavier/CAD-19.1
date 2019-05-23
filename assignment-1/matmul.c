@@ -1,4 +1,4 @@
-#include "matmulc.h"
+#include "matmul.h"
 #include <string.h>
 
 #ifndef USAGE

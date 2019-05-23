@@ -66,9 +66,6 @@ main(int argc, const char* argv[]){
 		printf("Warning: v must be %d or greater. Assuming v = %d.\n\n", MIN_SAMPLE, MIN_SAMPLE);
 	}
 
-	double* T_c = vetor(V);
-	double* T_f = vetor(V);
-
 	if (n < 2) {
 		n = 2;
 		printf("Warning: n must be 2 or greater. Assuming n = 2.\n\n");
@@ -104,14 +101,10 @@ main(int argc, const char* argv[]){
 			T[k] = MatMul(A, x, y, n);
 		}
 
-		free_matriz(A, n); free(x); free(y);
-
-
-
 		mu = mean(T, V);
 		sigma = stddev(T, V);
 
-		fprintf(fp, "%d|%.16e+%.16e|%d\n", n, mu, sigma, V);
+		fprintf(fp, "%d|%.16e$%.16e|%d\n", n, mu, sigma, V);
 	}
 	fclose(fp);
 
