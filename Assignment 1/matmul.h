@@ -2,47 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <omp.h>
 
-#ifndef LOAD_SIZE
-#define LOAD_SIZE      20
+#ifndef MIN_SAMPLE
+#define MIN_SAMPLE     3
 #endif
 
-#ifndef nullptr
-#define nullptr     NULL
-#endif
-
-double
-seconds(clock_t t){
-	return ((double) t) / CLOCKS_PER_SEC;
-}
-
-void
-loading(int i, int d, clock_t t){
-	float I = (float) i;
-	float D = (float) d;
-	int m = (int) LOAD_SIZE*(I / D);
-	
-	int j, k;
-	printf("|");
-	
-	for(j=0; j <= m; j++) {
-		printf("#");
-	}
-	
-	for(k=m; k < LOAD_SIZE; k++){
-		printf(" ");
-	}
-	printf("|");
-	
-	int time = (int) (seconds(t));
-	printf(" time: %d s", time);
-	printf("\r");
-}
-
-double 
-log2(double n){  
-	return log(n) / log(2);  
-}  
 
 double
 random_double(void){
@@ -59,33 +24,9 @@ mean(double* x, int n){
 	return s/n;
 }
 
-double*
-bigarray(int* n) {
-	// returns a pointer for the biggest array possible
-	(*n) = 1;
-	double* x;
-	double* y;
-	
-	do {
-		x = y;
-		(*n) <<= 1;
-		y = (double*) malloc((*n)* sizeof(double));
-		
-	} while(y != nullptr);
-	
-	(*n) >>= 1;
-	return x;
-}
-
 int
-sample(int v, int n){
-	int k = (int) v / ceil(log2(n));
-	if(k >= 3){
-		return k;
-	}
-	else{
-		return 3;
-	}
+max_array_size(){
+    return 2048;
 }
 
 double
@@ -158,41 +99,30 @@ free_matriz(double** A, int n){
     free(A);
 }
 
-double
-MatMulC(double** A, double* x, double*y, int n){
-	int i,j;
-
-	random_matriz(A, n, n);
+void reset(double** A, double* x, double* y, int n){
+    random_matriz(A, n, n);
 	random_vetor(x, n);
 	zero_vector(y, n);
-
-	clock_t antes, depois;
-
-	antes = clock();
-	for(i=0;i<n;i++){
-		for(j=0;j<n;j++){
-			y[i] += A[i][j]*x[j];
-		}
-	}
-	depois = clock();
-    return seconds(depois - antes);
 }
 
 double
-MatMulF(double** A, double* x, double*y, int n){
-	int i,j;
+dot(double* x, double* y, int n){
+    int j; double s = 0.0;
+    #pragma omp parallel for private(j) shared(s)
+    for(j=0;j<n;j++){
+        s += x[j]*y[j];
+    }
+    return s;
+}
 
-	random_matriz(A, n, n);
-	random_vetor(x, n);
-	zero_vector(y, n);
-
-	clock_t antes, depois;
-    antes = clock();
-	for(j=0;j<n;j++){
-		for(i=0;i<n;i++){
-			y[i] += A[i][j]*x[j];
-		}
+double
+MatMul(double** A, double* x, double*y, int n){
+	reset(A, x, y, n);
+    int i;
+	double t = omp_get_wtime();
+	#pragma omp parallel for private(i) shared(y)
+	for(i=0;i<n;i++){
+        y[i] = dot(A[i], x, n);
 	}
-	depois = clock();
-    return ((double)(depois-antes))/CLOCKS_PER_SEC;
+    return omp_get_wtime() - t;
 }

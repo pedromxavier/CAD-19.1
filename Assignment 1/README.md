@@ -2,7 +2,7 @@
 
 ## C:
 ```
-gcc -o matmulc matmul.c -lm
+gcc -o matmulc matmulc.c -lm
 ./matmulc [n] [N] [s] [v]
 n : dimensão mínima da matriz
 N : dimensão máxima da matriz
@@ -12,6 +12,9 @@ while (n <= N){
   n += s;
 }
 v : número de vezes que y = A x é calculado para cada valor de n.
+
+Para mais detalhes:
+./matmulc -h
 
 arquivos:
 "c_results_c.txt" e "c_results_f.txt" sendo a multiplicação por linhas e por colunas, respectivamente.
