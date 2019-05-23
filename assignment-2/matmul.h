@@ -90,15 +90,6 @@ zero_vector(double* y, int n){
     }
 }
 
-void
-free_matriz(double** A, int n){
-    int i;
-    for(i=0;i<n;i++){
-        free(A[i]);
-    }
-    free(A);
-}
-
 void reset(double** A, double* x, double* y, int n){
     random_matriz(A, n, n);
 	random_vetor(x, n);
@@ -108,21 +99,26 @@ void reset(double** A, double* x, double* y, int n){
 double
 dot(double* x, double* y, int n){
     int j; double s = 0.0;
-    #pragma omp parallel for private(j) shared(s)
-    for(j=0;j<n;j++){
-        s += x[j]*y[j];
-    }
+    // #pragma omp for
+    // {
+        for(j=0;j<n;j++){
+            s += x[j]*y[j];
+        }
+    // }
     return s;
 }
 
 double
 MatMul(double** A, double* x, double*y, int n){
 	reset(A, x, y, n);
-    int i;
 	double t = omp_get_wtime();
-	#pragma omp parallel for private(i) shared(y)
-	for(i=0;i<n;i++){
-        y[i] = dot(A[i], x, n);
-	}
+	#pragma omp parallel
+    {
+        int i;
+        #pragma omp for schedule(guided, 1)
+        for(i = 0; i < n; i++){
+            y[i] = dot(A[i], x, n);
+        }
+    }
     return omp_get_wtime() - t;
 }

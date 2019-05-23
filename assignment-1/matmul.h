@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <omp.h>
 
 #ifndef LOAD_SIZE
 #define LOAD_SIZE      50
@@ -157,16 +158,14 @@ MatMulC(double** A, double* x, double*y, int n){
 	random_vetor(x, n);
 	zero_vector(y, n);
 
-	clock_t antes, depois;
+	double t = omp_get_wtime();
 
-	antes = clock();
 	for(i=0;i<n;i++){
 		for(j=0;j<n;j++){
 			y[i] += A[i][j]*x[j];
 		}
 	}
-	depois = clock();
-    return seconds(depois - antes);
+	return omp_get_wtime() - t;
 }
 
 double

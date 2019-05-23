@@ -11,8 +11,8 @@
 
 int
 main(int argc, const char* argv[]){
-    int seed = time(NULL);
-    srand(seed);
+    // int seed = time(NULL);
+    srand(0);
 
 	int n, N, s, V;
 

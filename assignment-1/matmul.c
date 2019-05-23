@@ -96,10 +96,10 @@ main(int argc, const char* argv[]){
     double* y = vetor(N);
 	
 	FILE* fp_c;
-	FILE* fp_f;
+	// FILE* fp_f;
 
 	fp_c = fopen("c_result_c.txt","w");
-	fp_f = fopen("c_result_f.txt","w");
+	// fp_f = fopen("c_result_f.txt","w");
 
 	int k, v;
 	
@@ -116,29 +116,29 @@ main(int argc, const char* argv[]){
 		for(k=0; k<v; k++){ // samples for each n
 			
 			T_c[k] = MatMulC(A, x, y, n);
-			T_f[k] = MatMulF(A, x, y, n);
+			// T_f[k] = MatMulF(A, x, y, n);
 			
 			depois = clock();
 			loading(i, d, depois-antes);
 		}
 
 		double mu_c, sigma_c;
-		double mu_f, sigma_f;
+		// double mu_f, sigma_f;
 
 		mu_c = mean(T_c, v); sigma_c = stddev(T_c, v);
-		mu_f = mean(T_f, v); sigma_f = stddev(T_f, v);
+		// mu_f = mean(T_f, v); sigma_f = stddev(T_f, v);
 
 		fprintf(fp_c, "%d|%.16e$%.16e|%d\n", n, mu_c, sigma_c, v);
-		fprintf(fp_f, "%d|%.16e$%.16e|%d\n", n, mu_f, sigma_f, v);
+		// fprintf(fp_f, "%d|%.16e$%.16e|%d\n", n, mu_f, sigma_f, v);
 		n += s;
 		i++;
 	}
 	
-	free_matriz(A, N); free(x); free(y); free(T_c); free(T_f);
+	free_matriz(A, N); free(x); free(y); free(T_c);
 
 	printf("\n-finished-\n");
 	fclose(fp_c);
-	fclose(fp_f);
+	// fclose(fp_f);
 
 	return 0;
 	}

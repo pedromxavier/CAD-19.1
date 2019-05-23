@@ -6,7 +6,7 @@ argc = len(sys.argv)
 
 colors = iter(['r', 'b', 'g', 'c', 'm', 'y', 'k'])
 
-modes = iter(['linhas', 'colunas'])
+modes = iter(['sequencial', 'paralelo-sem-schedule', 'paralelo-schedule-guided', 'paralelo-schedule-dinamico'])
 
 bars = 8;
 
@@ -71,14 +71,12 @@ def main():
     if len(sys.argv) == 0:
         print('faltou nome do arquivo de resultados')
         return
-    elif len(sys.argv) == 4:
-        title = sys.argv[3]
     else:
-        title = ''
+        title = 'resultados'
 
     N, T, DT = [],[],[]
     header = []
-    for fname in sys.argv[1:3]:
+    for fname in sys.argv[1:]:
         n, t, dt = read_data(fname)
         N.append(n)
         T.append(t)
