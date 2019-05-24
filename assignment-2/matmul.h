@@ -98,27 +98,66 @@ void reset(double** A, double* x, double* y, int n){
 
 double
 dot(double* x, double* y, int n){
-    int j; double s = 0.0;
-    // #pragma omp for
-    // {
-        for(j=0;j<n;j++){
-            s += x[j]*y[j];
-        }
-    // }
+    double s = 0.0;
+    for(int j = 0; j < n; j++){
+        s += x[j]*y[j];
+    }
     return s;
 }
 
 double
-MatMul(double** A, double* x, double*y, int n){
-	reset(A, x, y, n);
-	double t = omp_get_wtime();
-	#pragma omp parallel
+MatMul_sequential(double** A, double* x, double*y, int n){
+    double wtime = omp_get_wtime();
+    for(int i = 0; i < n; i++){
+        y[i] = dot(A[i], x, n);
+    }
+    return omp_get_wtime() - wtime;
+}
+
+double
+MatMul_no_schedule(double** A, double* x, double*y, int n){
+    double wtime = omp_get_wtime();
+    #pragma omp parallel num_threads(4)
     {
-        int i;
-        #pragma omp for schedule(guided, 1)
-        for(i = 0; i < n; i++){
+        #pragma omp for
+        for(int i = 0; i < n; i++){
             y[i] = dot(A[i], x, n);
         }
     }
-    return omp_get_wtime() - t;
+    return omp_get_wtime() - wtime;
+}
+
+double
+MatMul_guided_schedule(double** A, double* x, double*y, int n){
+    double wtime = omp_get_wtime();
+    #pragma omp parallel num_threads(4)
+    {
+        #pragma omp for schedule(guided, 1)
+        for(int i = 0; i < n; i++){
+            y[i] = dot(A[i], x, n);
+        }
+    }
+    return omp_get_wtime() - wtime;
+}
+
+double
+MatMul_dynamic_schedule(double** A, double* x, double*y, int n){
+    double wtime = omp_get_wtime();
+    #pragma omp parallel num_threads(4)
+    {
+        #pragma omp for schedule(dynamic, 1)
+        for(int i = 0; i < n; i++){
+            y[i] = dot(A[i], x, n);
+        }
+    }
+    return omp_get_wtime() - wtime;
+}
+
+void
+free_matriz(double** A, int n){
+    int i;
+    for(i=0;i<n;i++){
+        free(A[i]);
+    }
+    free(A);
 }
