@@ -2,7 +2,18 @@
 #include <string.h>
 
 #ifndef USAGE
-#define USAGE "usage:\n [0]./matmul ([n=2] [N=max_array_size] [step=1] [v=MIN_SAMPLE]) \n\n [1]./matmul [n] ([N=max_array_size] [step=1] [v=MIN_SAMPLE]) \n\n [2]./matmul [n] [step] ([N=max_array_size] [v=MIN_SAMPLE]) \n\n [3]./matmul [n] [step] [v] ([N=max_array_size]) \n\n [4]./matmul [n] [N] [step] [v]\n\nparallel options:\n0 => sequential\n1 => no schedule\n2 => guided schedule\n3 => dynamic schedule"
+#define USAGE 	"usage:\n 0 => ./matmul ([n=2] [N=max_array_size] [step=1] [v=MIN_SAMPLE] [parallel=0])\n\
+ 1 => ./matmul [n] ([N=max_array_size] [step=1] [v=MIN_SAMPLE] [parallel=0])\n\
+ 2 => ./matmul [n] [step] ([N=max_array_size] [v=MIN_SAMPLE] [parallel=0])\n\
+ 3 => ./matmul [n] [step] [v] ([N=max_array_size] [parallel=0])\n\
+ 4 => ./matmul [n] [N] [step] [v] ([parallel=0])\n\
+ 5 => ./matmul [n] [N] [step] [v] [parallel]\n\
+\nparallel options:\n\
+ 0 => sequential\n\
+ 1 => static scheduling\n\
+ 2 => guided scheduling\n\
+ 3 => dynamic scheduling\n\n"
+
 #endif
 
 #ifndef BEGIN
@@ -125,8 +136,8 @@ main(int argc, const char* argv[]){
         case 0: //sequential
             run_matmul("results_sequential.txt", MatMul_sequential, n, N, s, V);
             break;
-        case 1: //no schedule
-            run_matmul("results_no_schedule.txt", MatMul_no_schedule, n, N, s, V);
+        case 1: //static schedule
+            run_matmul("results_static_schedule.txt", MatMul_static_schedule, n, N, s, V);
             break;
         case 2: //guided schedule
             run_matmul("results_guided_schedule.txt", MatMul_guided_schedule, n, N, s, V);
