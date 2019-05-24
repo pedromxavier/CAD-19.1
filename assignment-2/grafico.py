@@ -6,9 +6,9 @@ argc = len(sys.argv)
 
 colors = iter(['r', 'b', 'g', 'c', 'm', 'y', 'k'])
 
-modes = iter(['sequencial', 'paralelo-sem-schedule', 'paralelo-schedule-guided', 'paralelo-schedule-dinamico'])
-
 bars = 8;
+
+modes = iter(map(lambda x: x[:-4], sys.argv[1:]))
 
 def formattime(t, e):
     t = np.array(t, dtype=np.float64)
@@ -48,14 +48,8 @@ def read_data(fname):
 
 
 def polyformat(a,b,c):
-    a,b,c = tuple(map(lambda x: "{:.5f}".format(x), (a,b,c)))
-    if a[0] != '-':
-        a = " " + a
-    if b[0] != '-':
-        b = "+" + b
-    if c[0] != '-':
-        c = "+" + c
-    return r'${}x^2 {}x {}$'.format(a,b,c)
+    a,b,c = tuple(map(lambda x: "{:+.6f}".format(x), (a,b,c)))
+    return r'${}N^2 {}N {}$'.format(a,b,c)
 
 
 def main():
@@ -72,7 +66,7 @@ def main():
         print('faltou nome do arquivo de resultados')
         return
     else:
-        title = 'resultados'
+        title = ''
 
     N, T, DT = [],[],[]
     header = []
@@ -83,9 +77,9 @@ def main():
         DT.append(dt)
     max_t = max(sum(T, []))
     max_l = max(map(len, N))
-    
+
     step = int(max_l / bars + 1);
-    
+
     e = np.log10(max_t)
     _, s = formattime(0, e)
 
