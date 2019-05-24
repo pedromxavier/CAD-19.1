@@ -3,4 +3,13 @@ assignment-1/c_result*
 assignment-2/c_result*
 assignment-2/result*
 assignment-1/matmul
-assignment-2/matmul
+
+assignment-2/parallel_dot_20000\.png
+
+assignment-2/parallel_dot_8threads_dynamic_n8\.png
+
+assignment-2/parallel_dot_8threads\.png
+
+assignment-2/parallel_dot_dynamic_n4\.png
+
+assignment-2/parallel_dot\.png
